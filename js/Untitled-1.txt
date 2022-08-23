@@ -1,0 +1,238 @@
+let width = window.innerWidth, height = window.innerHeight;
+let squares = [], squareSize = 1920 / (1920 * 0.05), squareLength = squareSize * squareSize;
+let crosses = [], crossSize = 1920 / (1920 * 0.05), crossLength = crossSize * crossSize;
+let radian = Math.PI / 180;
+let clock = {
+    second: {
+        num: 60,
+        pos: [],
+        array: []
+    }
+}
+
+const getSquares = () => {
+    let length = (height / width).toFixed(1) * squareLength;
+    for(let i = 0; i < length; i++){
+        squares[i] = {
+            id: i, 
+            style: {boxShadow: "0px 0px 20px rgba(0, 0, 0, 0)", opacity: "0", transition: "box-shadow, opacity 0.3s"}
+        }
+    }
+}
+const getCrosses = () => {
+    let length = (height / width).toFixed(1) * crossLength;
+    for(let i = 0; i < length; i++){
+        crosses[i] = {
+            id: i
+        }
+    }
+}
+const createSecond = () => {
+    let deg = 6, toTop = 90;
+    for(let i = 0; i < clock.second.num; i++){
+        let x = `${Math.cos((i * deg - toTop) * radian) * (height * 720 / 2160)}px`;
+        let y = `${Math.sin((i * deg - toTop) * radian) * (height * 720 / 2160)}px`;
+        clock.second.pos[i] = {x: x, y: y};
+        clock.second.array[i] = {
+            id: i,
+            text: "0",
+            style: {
+                transform: `translate(${x}, ${y})`, 
+                color: i == 15 ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.25)",
+                transition: `transform 0.3s`
+            }
+        };
+    }
+}
+const init = () => {
+    new Vue({
+        el: '#wrap',
+        data: {
+            utils: {
+                width: {
+                    vw: 100,
+                    halfOfVw: 50,
+                },
+                height: {
+                    vh: 100,
+                    halfOfVh: 50
+                },
+                radian: Math.PI / 180
+            },
+            styles: {
+                loading: {
+                    div: {width: "0px"},
+                    span: {
+                        a: {left: "0", display: "block"},
+                        b: {right: "0", display: "block"},
+                        c: {display: "none"}
+                    }
+                },
+                background: {
+                    image: {transform: "scale(1.2)", transition: "transform 1.2s", transitionDelay: "0.3s", transformOrigin: "top"},
+                }
+            },
+            shows: {
+                opening: true
+            },
+            arrays: {
+                square: squares,
+                cross: crosses,
+                clock: {
+                    second: clock.second.array
+                }
+            },
+            loading: {
+                step: 0.75,
+                width: 0,
+                isPlay: true,
+                progress: 0,
+                complete: "100%"
+            },
+            clock: {
+                second: 60,
+                seconds: clock.second.pos
+            },
+            time: {
+                sec: 0,
+                min: null,
+                hour: null
+            }
+        },
+        mounted(){
+            this.animate();
+            window.addEventListener('resize', this.onWindowResize, false);
+        },
+        computed: {
+            watchTimeSec(){
+                return this.time.sec;
+            }
+        },
+        watch: {
+            watchTimeSec(){
+                for(let i = 0; i < this.clock.second; i++){
+                    let step = i == this.clock.second - 1 ? 0 : i + 1;
+                    this.arrays.clock.second[i].style.transform = `translate(${this.clock.seconds[step].x}, ${this.clock.seconds[step].y})`;
+                }
+                console.log("works")
+            }
+        },
+        methods: {
+            rotateSecond(){
+                for(let i = 0; i < this.clock.second; i++){
+                    let crt = this.time.sec;
+                    if(this.arrays.clock.second[i].id < this.arrays.clock.second[15].id){
+                        let ch = this.arrays.clock.second[15].id - this.arrays.clock.second[i].id;
+                        this.arrays.clock.second[i].text = crt - ch > -1 ? crt - ch : 60 - Math.abs(crt - ch);
+                    }else if(this.arrays.clock.second[i].id > this.arrays.clock.second[15].id){
+                        let ch = this.arrays.clock.second[i].id - this.arrays.clock.second[15].id
+                        this.arrays.clock.second[i].text = crt + ch < 60 ? crt + ch : (crt + ch) - 60;
+                    }
+                }
+            },
+            resizeSecond(){
+                let deg = 6, toTop = 90;
+                this.arrays.clock.second = [];
+                clock.second.array = [];
+                this.clock.seconds = [];
+                clock.second.pos = []
+                for(let i = 0; i < this.clock.second; i++){
+                    let x = `${Math.cos((i * deg - toTop) * this.utils.radian) * (height * 720 / 2160)}px`;
+                    let y = `${Math.sin((i * deg - toTop) * this.utils.radian) * (height * 720 / 2160)}px`;
+                    clock.second.pos[i] = {x: x, y: y};
+                    clock.second.array[i] = {
+                        id: i,
+                        text: "0",
+                        style: {
+                            transform: `translate(${x}, ${y})`, 
+                            color: i == 15 ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.25)",
+                            transition: `transform 0.3s`
+                        }
+                    };
+                }
+                this.arrays.clock.second = clock.second.array;
+                this.clock.seconds = clock.second.pos;
+            },
+            squareMouseEnter(id){
+                this.arrays.square[id].style.transition = "box-shadow, opacity 0s";
+                this.arrays.square[id].style.boxShadow = "0px 0px 30px rgba(0, 0, 0, 0.65)";
+                this.arrays.square[id].style.opacity = "1";
+            },
+            squareMouseLeave(id){
+                this.arrays.square[id].style.transition = "box-shadow, opacity 0.5s";
+                this.arrays.square[id].style.boxShadow = "0px 0px 30px rgba(0, 0, 0, 0)";
+                this.arrays.square[id].style.opacity = "0";
+            },
+            resizeSquareLength(){
+                let length = (height / width).toFixed(1) * squareLength;
+                this.arrays.square = [];
+                squares = [];
+                for(let i = 0; i < length; i++){
+                    squares[i] = {
+                        id: i, 
+                        style: {boxShadow: "0px 0px 20px rgba(0, 0, 0, 0)", opacity: "0", transition: "box-shadow, opacity 0.3s"}
+                    }
+                }
+                this.arrays.square = squares;
+            },
+            resizeCrossLength(){
+                let length = (height / width).toFixed(1) * crossLength;
+                this.arrays.cross = [];
+                crosses = [];
+                for(let i = 0; i < length; i++){
+                    crosses[i] = {
+                        id: i
+                    }
+                }
+                this.arrays.cross = crosses;
+            },
+            onWindowResize(){
+                width = window.innerWidth;
+                height = window.innerHeight;
+                this.resizeSquareLength();
+                this.resizeCrossLength();
+                this.resizeSecond();
+            },
+            loadCompleted(){
+                this.styles.loading.span.a.display = "none";
+                this.styles.loading.span.b.display = "none";
+                this.styles.loading.span.c.display = "block";
+                this.loading.isPlay = false;
+                this.shows.opening = false;
+                this.styles.background.image.transform = "scale(1.0)";
+            },
+            loadingBar(){
+                if(this.loading.width < this.utils.width.halfOfVw){
+                    this.loading.width += this.loading.step;
+                    this.styles.loading.div.width = `${this.loading.width}vw`;
+                    this.styles.loading.span.a.left = `${this.loading.width - this.loading.step * 2}vw`;
+                    this.styles.loading.span.b.right = `${this.loading.width - this.loading.step * 2}vw`;
+                    this.loading.progress = Math.floor(this.loading.width / this.utils.width.halfOfVw * 100);
+                }
+                else {
+                    this.loadCompleted();
+                }
+            },
+            currentTime(){
+                let date = new Date();
+                this.time.sec = date.getSeconds();
+                this.time.min = date.getMinutes();
+                this.time.hour = date.getHours();
+                //this.rotateSecond()
+            },
+            render(){
+                if(this.loading.isPlay) this.loadingBar();
+                this.currentTime();
+            },
+            animate(){
+                this.render();
+                requestAnimationFrame(this.animate);
+            }
+        }
+    })
+}
+
+getSquares();
+getCrosses();
+createSecond();
+init();
