@@ -194,9 +194,8 @@ const init = () => {
                 return hour+':'+min+':'+sec;
             },
             displayUptime(){
-                this.uptime = 7200000;
                 let sec = Math.floor(this.uptime / 1000) % 60;
-                let min = Math.floor(Math.floor(this.uptime / 1000) / 60);
+                let min = Math.floor(Math.floor(this.uptime / 1000) / 60) % 60; //除以60取余数，解决显示会超过60的问题
                 let hour = Math.floor(Math.floor(this.uptime / 1000) / 3600) % 100;
                 sec = sec < 10 ? '0'+sec : sec;
                 min = min < 10 ? '0'+min : min;
