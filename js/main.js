@@ -268,6 +268,18 @@ const init = () => {
                             this.styles.background.image.backgroundImage = `url(./image/background/2.jpg)`;
                             this.styles.background.frame.opacity = '0.85';
                             break;
+                        case 2:
+                            this.styles.background.image.backgroundImage = `url(./image/background/6.jpg)`;
+                            this.styles.background.frame.opacity = '0.75';
+                            break;
+                        case 3:
+                            this.styles.background.image.backgroundImage = `url(./image/background/7.jpg)`;
+                            this.styles.background.frame.opacity = '0.5';
+                            break;
+                        case 4:
+                            this.styles.background.image.backgroundImage = `url(./image/background/8.jpg)`;
+                            this.styles.background.frame.opacity = '0.5';
+                            break;
                     }
                 }else{
                     this.shows.video = true;
