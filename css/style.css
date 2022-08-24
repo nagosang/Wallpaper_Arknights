@@ -585,10 +585,22 @@ div#overlay-wrap > div div:hover{
 div#overlay-image div:nth-child(1){
     background: url('../image/background/1.jpg') no-repeat center center;
     background-size: cover;
-    margin-left: calc(100vw * 385 / 3840);
+    margin-left: calc(100vw * 385 / 3840); 
 }
 div#overlay-image div:nth-child(2){
     background: url('../image/background/2.jpg') no-repeat center center;
+    background-size: cover;
+}
+div#overlay-image div:nth-child(3){
+    background: url('../image/background/6.jpg') no-repeat center center;
+    background-size: cover;
+}
+div#overlay-image div:nth-child(4){
+    background: url('../image/background/7.jpg') no-repeat center center;
+    background-size: cover;
+}
+div#overlay-image div:nth-child(5){
+    background: url('../image/background/8.jpg') no-repeat center center;
     background-size: cover;
 }
 div#overlay-video div:nth-child(1){
